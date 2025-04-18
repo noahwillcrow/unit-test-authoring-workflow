@@ -1,0 +1,1 @@
+go build -o ./out ./unit-test-authoring-workflow/main.go

@@ -175,6 +175,7 @@ bin/
 obj/
 
 # Custom
+out
 gitignored/
 *.gitignored*
 OrderProcessorTests_*
