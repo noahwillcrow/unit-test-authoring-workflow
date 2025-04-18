@@ -176,4 +176,5 @@ obj/
 
 # Custom
 gitignored/
+*.gitignored*
 OrderProcessorTests_*

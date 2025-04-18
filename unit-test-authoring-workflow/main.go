@@ -14,6 +14,10 @@ func main() {
 
 	config := internal.LoadConfig(inputArgs.configYamlFilePath)
 
+	println("Base URL: " + config.GetBaseURL())
+	println("API Key: " + config.GetAPIKey())
+	println("Model Name: " + config.GetModelName())
+
 	openaiClient := openai.NewClient(
 		option.WithBaseURL(config.GetBaseURL()),
 		option.WithAPIKey(config.GetAPIKey()),

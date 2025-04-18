@@ -3,45 +3,54 @@ package internal
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
 
+type innerConfig struct {
+	APIKey    string `yaml:"apiKey"`
+	BaseURL   string `yaml:"baseURL"`
+	ModelName string `yaml:"modelName"`
+}
+
 // Config is a struct that holds the configuration for the application
 type Config struct {
-	apiKey    string
-	baseURL   string
-	modelName string
+	innerConfig innerConfig
 }
 
 // LoadConfig creates a Config by loading it from the given file path
 func LoadConfig(configYamlFilePath string) *Config {
-	file, err := os.Open(configYamlFilePath)
+	filename, _ := filepath.Abs(configYamlFilePath)
+	yamlFile, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Failed to open config file: %v", err)
 	}
-	defer file.Close()
+
+	var innerConfig innerConfig
+	if err := yaml.Unmarshal(yamlFile, &innerConfig); err != nil {
+		panic(err)
+	}
 
 	var config Config
-	decoder := yaml.NewDecoder(file)
-	if err := decoder.Decode(&config); err != nil {
-		log.Fatalf("Failed to decode config file: %v", err)
-	}
+	config.innerConfig = innerConfig
+
+	println("Config loaded successfully")
 
 	return &config
 }
 
 // GetAPIKey gets the API key on the Config
 func (config *Config) GetAPIKey() string {
-	return config.apiKey
+	return config.innerConfig.APIKey
 }
 
 // GetBaseURL gets the base URL on the Config
 func (config *Config) GetBaseURL() string {
-	return config.baseURL
+	return config.innerConfig.BaseURL
 }
 
 // GetModelName gets the model name on the Config
 func (config *Config) GetModelName() string {
-	return config.modelName
+	return config.innerConfig.ModelName
 }
