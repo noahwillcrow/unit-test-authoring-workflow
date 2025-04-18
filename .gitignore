@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# .NET
+bin/
+obj/
+
+# Custom
+gitignored/
+OrderProcessorTests_*

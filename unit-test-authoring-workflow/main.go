@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 
+	"github.com/noahwillcrow/unit-test-authoring-workflow/unit-test-authoring-workflow/internal"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
 )
@@ -11,18 +12,18 @@ import (
 func main() {
 	inputArgs := parseInputArgs()
 
-	println(inputArgs.fileName, inputArgs.apiKey, inputArgs.baseURL, inputArgs.modelName)
+	config := internal.LoadConfig(inputArgs.configYamlFilePath)
 
 	openaiClient := openai.NewClient(
-		option.WithBaseURL(inputArgs.baseURL),
-		option.WithAPIKey(inputArgs.apiKey),
+		option.WithBaseURL(config.GetBaseURL()),
+		option.WithAPIKey(config.GetAPIKey()),
 	)
 
 	chatCompletion, err := openaiClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(inputArgs.fileName),
+			openai.UserMessage(inputArgs.filePath),
 		}),
-		Model: openai.F(inputArgs.modelName),
+		Model: openai.F(config.GetModelName()),
 	})
 	if err != nil {
 		panic(err.Error())
@@ -32,22 +33,15 @@ func main() {
 }
 
 type inputArgsStruct struct {
-	fileName string
-
-	apiKey    string
-	baseURL   string
-	modelName string
+	configYamlFilePath string
+	filePath           string
 }
 
 func parseInputArgs() *inputArgsStruct {
-
 	var ret inputArgsStruct = inputArgsStruct{}
 
-	flag.StringVar(&ret.fileName, "filename", "", "The filename to read")
-
-	flag.StringVar(&ret.apiKey, "apikey", "", "The API key to use")
-	flag.StringVar(&ret.baseURL, "baseurl", "", "The base URL to use")
-	flag.StringVar(&ret.modelName, "modelname", "", "The model name to use")
+	flag.StringVar(&ret.configYamlFilePath, "config", "", "The path to the config to read and use")
+	flag.StringVar(&ret.filePath, "file", "", "The path to the file to write unit tests against")
 
 	flag.Parse()
 
