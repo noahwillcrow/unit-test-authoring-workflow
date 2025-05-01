@@ -1,7 +1,9 @@
 {
     "name": "Go",
     // Use a Go-based dev container image
-    "image": "mcr.microsoft.com/devcontainers/go:1.23-bullseye",
+    "build": {
+        "dockerfile": "./Dockerfile"
+    },
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
