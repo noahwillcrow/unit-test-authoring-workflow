@@ -9,9 +9,10 @@ import (
 )
 
 type innerConfig struct {
-	APIKey    string `yaml:"apiKey"`
-	BaseURL   string `yaml:"baseURL"`
-	ModelName string `yaml:"modelName"`
+	APIKey       string `yaml:"apiKey"`
+	BaseURL      string `yaml:"baseURL"`
+	Instructions string `yaml:"instructions"`
+	ModelName    string `yaml:"modelName"`
 }
 
 // Config is a struct that holds the configuration for the application
@@ -48,6 +49,11 @@ func (config *Config) GetAPIKey() string {
 // GetBaseURL gets the base URL on the Config
 func (config *Config) GetBaseURL() string {
 	return config.innerConfig.BaseURL
+}
+
+// GetInstructions gets the base URL on the Config
+func (config *Config) GetInstructions() string {
+	return config.innerConfig.Instructions
 }
 
 // GetModelName gets the model name on the Config
