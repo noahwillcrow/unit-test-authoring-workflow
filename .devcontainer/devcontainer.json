@@ -23,6 +23,7 @@
         "vscode": {
             "extensions": [
                 "golang.go",
+                "johnnymorganz.luau-lsp",
                 "ms-vscode.go"
             ]
         }
