@@ -18,11 +18,6 @@ func main() {
 
 	config := internal.LoadConfig(inputArgs.configYamlFilePath)
 
-	openaiClient := openai.NewClient(
-		option.WithBaseURL(config.GetBaseURL()),
-		option.WithAPIKey(config.GetAPIKey()),
-	)
-
 	println("Reading example test file contents...")
 	exampleTestFileContents, err := os.ReadFile(inputArgs.exampleTestFilePath)
 	if err != nil {
@@ -54,18 +49,24 @@ func main() {
 	println("Prompt:")
 	println(prompt)
 
-	println("Waiting for LLM response...")
-	chatCompletion, err := openaiClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(prompt),
-		}),
-		Model: openai.F(config.GetModelName()),
-	})
-	if err != nil {
-		panic(err.Error())
-	}
+	if !inputArgs.generatePromptOnly {
+		println("Waiting for LLM response...")
+		openaiClient := openai.NewClient(
+			option.WithBaseURL(config.GetBaseURL()),
+			option.WithAPIKey(config.GetAPIKey()),
+		)
+		chatCompletion, err := openaiClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+				openai.UserMessage(prompt),
+			}),
+			Model: openai.F(config.GetModelName()),
+		})
+		if err != nil {
+			panic(err.Error())
+		}
 
-	println(chatCompletion.Choices[0].Message.Content)
+		println(chatCompletion.Choices[0].Message.Content)
+	}
 }
 
 func loadCsharpDepsExplainer(csprojFilePath string, classFullName string) (string, error) {
@@ -99,6 +100,7 @@ type inputArgsStruct struct {
 	csproj              string
 	exampleTestFilePath string
 	filePath            string
+	generatePromptOnly  bool
 }
 
 func parseInputArgs() *inputArgsStruct {
@@ -109,6 +111,7 @@ func parseInputArgs() *inputArgsStruct {
 	flag.StringVar(&ret.csproj, "csproj", "", "The path to the csproj the target class lives in")
 	flag.StringVar(&ret.exampleTestFilePath, "example", "", "The path to the example test files class that already exists")
 	flag.StringVar(&ret.filePath, "file", "", "The file path of the target class to write tests against")
+	flag.BoolVar(&ret.generatePromptOnly, "dry-run", false, "Whether to run a 'dry-run', or just generate the prompt but not send it to an LLM")
 
 	flag.Parse()
 
