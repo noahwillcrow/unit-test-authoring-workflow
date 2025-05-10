@@ -24,6 +24,9 @@
             "extensions": [
                 "golang.go",
                 "johnnymorganz.luau-lsp",
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.csharp",
+                "ms-python.python",
                 "ms-vscode.go"
             ]
         }

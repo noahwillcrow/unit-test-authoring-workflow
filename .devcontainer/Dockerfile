@@ -33,6 +33,11 @@ RUN apt-get install -y git
 RUN apt-get install -y golang-go
 RUN apt-get install -y python3
 
+## Prepare python venv
+RUN python3 -m venv .venv
+RUN source .venv/bin/activate
+RUN pip install -r /path/to/requirements.txt
+
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
